@@ -5,6 +5,7 @@ import se.edu.inclass.task.Deadline;
 import se.edu.inclass.task.Task;
 import se.edu.inclass.task.TaskNameComparator;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ public class Main {
         DataManager dm = new DataManager("./data/data.txt");
         ArrayList<Task> tasksData = dm.loadData();
 
-        printData(tasksData);
+
         System.out.println();
         System.out.println("Printing deadlines");
         printDeadlines(tasksData);
@@ -29,6 +30,18 @@ public class Main {
         ArrayList<Task> filteredList = filterTaskListUsingStreams(tasksData, "11");
         System.out.println("\nTask filtered by String:");
         printData(filteredList);
+
+//        System.out.println("Total number of deadlines: " + countDeadlines(tasksData));
+        System.out.println("Total number of deadlines: " + countDeadlinesUsingStream(tasksData));
+        printData(tasksData);
+        printDataUsingStreams(tasksData);
+
+    }
+    private static int countDeadlinesUsingStream(ArrayList<Task> Tasks){
+        int count = (int) Tasks.stream()
+                .filter(t -> t instanceof Deadline)
+                .count();
+        return count;
     }
 
     public static ArrayList<Task> filterTaskListUsingStreams(ArrayList<Task> Tasks, String filterString) {
@@ -36,11 +49,9 @@ public class Main {
         filteredList = (ArrayList<Task>) Tasks.stream()
                 .filter(t -> t.getDescription().contains(filterString))
                 .collect(toList());
-
         return filteredList;
     }
-
-
+    
     private static int countDeadlines(ArrayList<Task> tasksData) {
         int count = 0;
         for (Task t : tasksData) {
@@ -50,8 +61,13 @@ public class Main {
         }
         return count;
     }
-
+    public static void printDataUsingStreams(ArrayList<Task> Tasks){
+        System.out.println("\nUsing Streams:");
+        Tasks.stream()
+                .forEach(System.out::println);
+    }
     public static void printData(ArrayList<Task> tasksData) {
+        System.out.println("Sanity Check");
         for (Task t : tasksData) {
             System.out.println(t);
         }
@@ -64,6 +80,7 @@ public class Main {
                 .forEach(System.out::println);
     }
     public static void printDeadlines(ArrayList<Task> tasksData) {
+        System.out.println("Without stream!");
         for (Task t : tasksData) {
             if (t instanceof Deadline) {
                 System.out.println(t);
